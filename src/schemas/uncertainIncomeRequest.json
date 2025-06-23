@@ -1,0 +1,255 @@
+{
+  "title": "Uncertain Income Request",
+  "type": "object",
+  "required": ["incomeType"],
+  "properties": {
+    "incomeType": {
+      "type": "string",
+      "enum": [
+        "OVERTIME",
+        "CASUAL", 
+        "CONTRACT_VARIABLE",
+        "COMMISSIONS",
+        "BONUS",
+        "INVESTMENT_SHARES",
+        "INVESTMENT_INTEREST"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "incomeType": {
+            "const": "OVERTIME"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "verificationMethod",
+          "salaryFrequency",
+          "baseIncome",
+          "endDateLatestPayslip",
+          "employmentStartDate",
+          "ytdAmountLatestPayslip"
+        ],
+        "properties": {
+          "verificationMethod": {
+            "type": "string",
+            "enum": ["NON_ESSENTIAL_SERVICES", "ESSENTIAL_SERVICES"]
+          },
+          "salaryFrequency": {
+            "type": "string",
+            "enum": ["WEEKLY", "FORTNIGHTLY", "MONTHLY"]
+          },
+          "baseIncome": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "endDateLatestPayslip": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "employmentStartDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "ytdAmountLatestPayslip": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "lastFyAnnualIncome": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "annualOverrideAmount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "incomeType": {
+            "enum": ["CASUAL", "CONTRACT_VARIABLE"]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "salaryFrequency",
+          "endDateLatestPayslip",
+          "employmentStartDate",
+          "ytdAmountLatestPayslip"
+        ],
+        "properties": {
+          "salaryFrequency": {
+            "type": "string",
+            "enum": ["WEEKLY", "FORTNIGHTLY", "MONTHLY"]
+          },
+          "endDateLatestPayslip": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "employmentStartDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "ytdAmountLatestPayslip": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "lastFyAnnualIncome": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "annualOverrideAmount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "incomeType": {
+            "const": "COMMISSIONS"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "salaryFrequency",
+          "baseIncome",
+          "endDateLatestPayslip",
+          "employmentStartDate",
+          "ytdAmountLatestPayslip"
+        ],
+        "properties": {
+          "salaryFrequency": {
+            "type": "string",
+            "enum": ["WEEKLY", "FORTNIGHTLY", "MONTHLY"]
+          },
+          "baseIncome": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "endDateLatestPayslip": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "employmentStartDate": {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+          },
+          "ytdAmountLatestPayslip": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "lastFyAnnualIncome": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "annualOverrideAmount": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "actualYtdCommission": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "incomeType": {
+            "const": "BONUS"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "verificationMethod",
+          "currentFyBonus"
+        ],
+        "properties": {
+          "verificationMethod": {
+            "type": "string",
+            "enum": ["ONE_YEAR_VERIFICATION", "TWO_YEAR_VERIFICATION"]
+          },
+          "currentFyBonus": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "lastFyBonus": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "incomeType": {
+            "enum": ["INVESTMENT_SHARES", "INVESTMENT_INTEREST"]
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "currentFy",
+          "lastFy"
+        ],
+        "properties": {
+          "currentFy": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          },
+          "lastFy": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 99999999.99,
+            "multipleOf": 0.01
+          }
+        }
+      }
+    }
+  ]
+} 

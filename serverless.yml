@@ -1,0 +1,98 @@
+service: athena-svc-uncertain-income
+frameworkVersion: "3"
+
+plugins:
+  - serverless-webpack
+  - serverless-offline
+  - serverless-domain-manager
+  - serverless-plugin-resource-tagging
+  - serverless-tag-cloud-watch-log-groups
+  - serverless-associate-waf
+
+deprecationNotificationMode: error
+provider:
+  stage: ${opt:stage,'dev'}
+  name: aws
+  runtime: nodejs20.x
+  region: ap-southeast-2
+  iam:
+    role: arn:aws:iam::${aws:accountId}:role/athena/core/iam/athena-lambda-basic-execution-role
+  logRetentionInDays: 365
+  deploymentBucket:
+    name: ${env:ATHENA_ARTEFACTS_BUCKET}
+  deploymentPrefix: products
+  apiGateway:
+    shouldStartNameWithService: true
+    disableDefaultEndpoint: true
+  stackTags:
+    ath:stage: ${self:provider.stage}
+    ath:product: uncertain-income
+    ath:owner: orcas
+  environment:
+    LOGGER_LEVEL: ${self:custom.loggerLevel.${self:provider.stage}}
+  vpc:
+    subnetIds:
+      - !ImportValue athena-core-net-neo-EgressVpcPrivateSubnetAId
+      - !ImportValue athena-core-net-neo-EgressVpcPrivateSubnetBId
+      - !ImportValue athena-core-net-neo-EgressVpcPrivateSubnetCId
+    securityGroupIds:
+      - !ImportValue athena-core-net-neo-EgressVpcSecurityGroupId
+  logs:
+    restApi:
+      executionLogging: false
+      format: '{"requestTime":"$context.requestTime","requestId":"$context.requestId","httpMethod":"$context.httpMethod","path":"$context.path","resourcePath":"$context.resourcePath","status":$context.status,"responseLatency":$context.responseLatency,"integrationRequestId":"$context.integration.requestId","functionResponseStatus":"$context.integration.status","integrationLatency":"$context.integration.latency","integrationServiceStatus":"$context.integration.integrationStatus","integrationErrorMessage":"$context.integrationErrorMessage","ip":"$context.identity.sourceIp","userAgent":"$context.identity.userAgent","errorResponseType":"$context.error.responseType","errorMessage":"$context.error.message","validationErrorString":"$context.error.validationErrorString"}'
+      roleManagedExternally: true
+
+resources:
+  Resources:
+    badRequestBodyResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseTemplates:
+          application/json: '{"success": false, "errors": [{"code": "INVALID_JSON_SYNTAX", "message": "Invalid JSON syntax in request body"}], "timestamp": "$context.requestTime", "requestId": "$context.requestId"}'
+        ResponseType: "BAD_REQUEST_BODY"
+        RestApiId: !Ref ApiGatewayRestApi
+        StatusCode: "400"
+
+functions:
+  calculateUncertainIncomeV1:
+    handler: src/handlers/calculateUncertainIncome.handler
+    timeout: 10
+    events:
+      - http:
+          path: /v1/calculate
+          method: post
+          cors: true
+          request:
+            schemas:
+              $default: ${self:custom.openapi.components.schemas.UncertainIncomeRequestV1}
+
+custom:
+  openapi: ${file(bundled-openapi.json)}
+  customDomains:
+    - rest:
+        domainName: uncertain-income.${ssm:/athena/dns/domain-name}
+        basePath: api/uncertain-income
+        stage: ${self:provider.stage}
+        certificateArn: ${ssm:/athena/dns/cert-arn/ap-southeast-2}
+        createRoute53Record: true
+        endpointType: "regional"
+        securityPolicy: tls_1_2
+        autoDomain: true
+  loggerLevel:
+    dev: verbose
+    test: verbose
+    prod: info
+  webpack:
+    excludeRegex: \.ts|test|\.map
+    excludeFiles:
+      - "**/*.test.js"
+      - "**/*.test.ts"
+    includeModules: true
+    forceExclude:
+      - aws-sdk
+  cloudWatchLogsTags:
+    ath:splunk-sync: "true"
+  associateWaf:
+    name: InternalOnly
+    version: V2 

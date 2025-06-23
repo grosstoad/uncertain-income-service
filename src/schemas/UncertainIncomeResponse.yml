@@ -1,0 +1,49 @@
+title: Uncertain Income Response
+type: object
+required:
+  - success
+  - data
+  - versions
+properties:
+  success:
+    type: boolean
+    const: true
+    description: Indicates successful calculation
+  data:
+    type: object
+    required:
+      - incomeType
+      - allowableAnnualIncome
+      - calculationDetails
+      - eligible
+    properties:
+      incomeType:
+        $ref: 'IncomeType.yml'
+        description: The income type that was calculated
+      verificationMethod:
+        $ref: 'VerificationMethod.yml'
+        description: The verification method used (if applicable)
+      allowableAnnualIncome:
+        type: number
+        minimum: 0
+        description: Final calculated allowable annual income amount
+      calculationDetails:
+        $ref: 'CalculationDetails.yml'
+        description: Detailed breakdown of calculation steps
+      eligible:
+        type: boolean
+        description: Whether the income meets eligibility requirements
+  versions:
+    type: object
+    required:
+      - api
+      - logic
+    properties:
+      api:
+        type: string
+        description: API version number
+        example: "1.0.0"
+      logic:
+        type: string
+        description: Calculation logic version
+        example: "2025.1" 

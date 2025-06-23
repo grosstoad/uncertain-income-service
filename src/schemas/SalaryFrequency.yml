@@ -1,0 +1,6 @@
+title: Salary Frequency
+type: string
+enum:
+  - WEEKLY
+  - FORTNIGHTLY
+  - MONTHLY 

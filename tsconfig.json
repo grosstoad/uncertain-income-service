@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "lib": ["es2020", "dom"],
+    "target": "es2020",
+    "outDir": ".build",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "sourceMap": true,
+    "preserveConstEnums": true,
+    "strictNullChecks": true,
+		"removeComments": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+		"noImplicitAny": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["jest", "node"]
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules/**/*",
+    ".serverless/**/*",
+    ".webpack/**/*",
+    ".vscode/**/*",
+    "**/*.js"
+  ]  
+} 

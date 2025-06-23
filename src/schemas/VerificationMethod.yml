@@ -1,0 +1,7 @@
+title: Verification Method
+type: string
+enum:
+  - NON_ESSENTIAL_SERVICES
+  - ESSENTIAL_SERVICES
+  - ONE_YEAR_VERIFICATION
+  - TWO_YEAR_VERIFICATION 

@@ -1,0 +1,22 @@
+title: Calculation Details
+type: object
+description: Detailed breakdown of intermediate calculation steps
+properties:
+  annualBaseSalary:
+    type: number
+    description: Calculated annual base salary (baseIncome × frequency multiplier)
+  expectedYtdBaseSalary:
+    type: number  
+    description: Expected year-to-date base salary based on employment period
+  daysPayCycleConversion:
+    type: number
+    description: Number of pay cycles calculated from employment period
+  averageAmountPerPayCycle:
+    type: number
+    description: Average amount per pay cycle (YTD amount ÷ pay cycles)
+  averageAmountLessBaseIncomeAnnual:
+    type: number
+    description: Annual amount after subtracting base income component
+  averageAmountLessBaseIncomeMonthly:
+    type: number
+    description: Monthly amount after subtracting base income component 

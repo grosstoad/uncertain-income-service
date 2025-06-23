@@ -1,0 +1,170 @@
+openapi: 3.0.3
+info:
+  title: athena-svc-uncertain-income
+  description: Calculates allowable uncertain income amounts for various income types using Australian financial year calculations
+  version: 1.0.0
+tags:
+  - name: Uncertain Income
+    description: Uncertain Income Calculations
+  - name: Team
+    description: The Orcas
+paths:
+  /api/uncertain-income/v1/calculate:
+    post:
+      summary: /v1/calculate
+      description: Calculate allowable uncertain income amount for any supported income type and verification method combination
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UncertainIncomeRequestV1'
+            examples:
+              overtime_non_essential:
+                summary: OVERTIME - Non-Essential Services
+                value:
+                  incomeType: "OVERTIME"
+                  verificationMethod: "NON_ESSENTIAL_SERVICES"
+                  salaryFrequency: "FORTNIGHTLY"
+                  baseIncome: 2000
+                  endDateLatestPayslip: "2025-06-01"
+                  employmentStartDate: "2024-07-01"
+                  ytdAmountLatestPayslip: 150000
+              bonus_one_year:
+                summary: BONUS - One Year Verification
+                value:
+                  incomeType: "BONUS"
+                  verificationMethod: "ONE_YEAR_VERIFICATION"
+                  currentFyBonus: 50000
+              investment_shares:
+                summary: INVESTMENT_SHARES
+                value:
+                  incomeType: "INVESTMENT_SHARES"
+                  currentFy: 25000
+                  lastFy: 30000
+        required: true
+      responses:
+        '200':
+          description: Successful calculation
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            X-Athena-RequestID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UncertainIncomeResponseV1'
+              examples:
+                overtime_success:
+                  summary: OVERTIME Calculation Success
+                  value:
+                    success: true
+                    data:
+                      incomeType: "OVERTIME"
+                      verificationMethod: "NON_ESSENTIAL_SERVICES"
+                      allowableAnnualIncome: 110500
+                      calculationDetails:
+                        annualBaseSalary: 52000
+                        expectedYtdBaseSalary: 48000
+                        daysPayCycleConversion: 24
+                        averageAmountPerPayCycle: 6250
+                        averageAmountLessBaseIncomeAnnual: 110500
+                        averageAmountLessBaseIncomeMonthly: 9208.33
+                      eligible: true
+                    versions:
+                      api: "1.0.0"
+                      logic: "2025.1"
+        '400':
+          description: Bad Request - Validation errors
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            X-Athena-RequestID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseV1'
+              examples:
+                validation_error:
+                  summary: Validation Error
+                  value:
+                    success: false
+                    errors:
+                      - field: "baseIncome"
+                        code: "MISSING_REQUIRED_FIELD"
+                        message: "Required field 'baseIncome' is missing or empty"
+                        path: "$.baseIncome"
+                    timestamp: "2025-06-21T10:30:00.123Z"
+                    requestId: "req_123456789"
+        '422':
+          description: Unprocessable Entity - Business logic errors
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            X-Athena-RequestID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseV1'
+              examples:
+                business_logic_error:
+                  summary: Business Logic Error
+                  value:
+                    success: false
+                    errors:
+                      - field: "employmentDuration"
+                        code: "INSUFFICIENT_EMPLOYMENT_DURATION"
+                        message: "Employment duration of 120 days is less than required 180 days. Annual override amount required for eligibility"
+                        value: 120
+                        path: "$.calculated.employmentDuration"
+                    timestamp: "2025-06-21T10:30:00.123Z"
+                    requestId: "req_123456789"
+        '500':
+          description: Internal Server Error
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            X-Athena-RequestID:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseV1'
+
+servers:
+  - url: https://uncertain-income.athena-dev.com.au/api/uncertain-income
+    description: Dev server
+  - url: https://uncertain-income.athena-test.com.au/api/uncertain-income
+    description: Test server
+  - url: https://uncertain-income.athena.com.au/api/uncertain-income
+    description: Production server
+
+components:
+  schemas:
+    # Main Request/Response Schemas
+    UncertainIncomeRequestV1:
+      $ref: '../v1/models/UncertainIncomeRequest.yml'
+    UncertainIncomeResponseV1:
+      $ref: '../v1/models/UncertainIncomeResponse.yml'
+    ErrorResponseV1:
+      $ref: '../v1/models/ErrorResponse.yml'
+    
+    # Supporting Schemas
+    IncomeType:
+      $ref: '../v1/models/IncomeType.yml'
+    VerificationMethod:
+      $ref: '../v1/models/VerificationMethod.yml'
+    SalaryFrequency:
+      $ref: '../v1/models/SalaryFrequency.yml'
+    CalculationDetails:
+      $ref: '../v1/models/CalculationDetails.yml' 

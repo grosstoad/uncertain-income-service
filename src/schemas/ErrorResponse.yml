@@ -1,0 +1,70 @@
+title: Error Response
+type: object
+required:
+  - success
+  - errors
+  - timestamp
+  - requestId
+properties:
+  success:
+    type: boolean
+    const: false
+    description: Indicates failed request
+  errors:
+    type: array
+    description: Array of error details
+    items:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        field:
+          type: string
+          description: Field name that caused the error (if applicable)
+        code:
+          type: string
+          description: Error code for programmatic handling
+          enum:
+            - INVALID_JSON_SYNTAX
+            - MISSING_REQUIRED_FIELD
+            - INVALID_DATA_TYPE
+            - INVALID_DATE_FORMAT
+            - INVALID_ENUM_VALUE
+            - OUT_OF_RANGE
+            - INVALID_DECIMAL_PRECISION
+            - FUTURE_DATE
+            - INVALID_DATE_RANGE
+            - MISSING_LAST_FY_INCOME
+            - MISSING_LAST_FY_BONUS
+            - INSUFFICIENT_EMPLOYMENT_DURATION
+            - ZERO_PAY_CYCLES
+            - NEGATIVE_CALCULATED_VALUE
+            - INVALID_COMBINATION
+            - EXCESSIVE_DECIMAL_PRECISION
+            - CALCULATION_ENGINE_ERROR
+            - DATABASE_ERROR
+            - FINANCIAL_YEAR_CONFIG_ERROR
+            - VERSION_MISMATCH_ERROR
+            - INTERNAL_SERVER_ERROR
+            - INVALID_INPUT
+        message:
+          type: string
+          description: Human-readable error message
+        value:
+          oneOf:
+            - type: string
+            - type: number
+            - type: "null"
+          description: The invalid value that caused the error (if applicable)
+        path:
+          type: string
+          description: JSON path to the field that caused the error (if applicable)
+          example: "$.baseIncome"
+  timestamp:
+    type: string
+    format: date-time
+    description: ISO 8601 timestamp when the error occurred
+  requestId:
+    type: string
+    description: Unique identifier for this request for debugging purposes 

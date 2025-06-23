@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "name": "uncertain-income-service",
+  "functions": {
+    "api/calculateUncertainIncome.ts": {
+      "runtime": "@vercel/node@18.x"
+    }
+  },
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/ui/$1"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/calculateUncertainIncome",
+      "destination": "/api/calculateUncertainIncome"
+    }
+  ],
+  "buildCommand": "npm run build:types && npm run build:openapi",
+  "outputDirectory": "ui",
+  "installCommand": "npm ci",
+  "devCommand": "npm run dev:full",
+  "framework": null
+}

@@ -1,0 +1,10 @@
+title: Income Type
+type: string
+enum:
+  - OVERTIME
+  - CASUAL
+  - CONTRACT_VARIABLE
+  - COMMISSIONS
+  - BONUS
+  - INVESTMENT_SHARES
+  - INVESTMENT_INTEREST 

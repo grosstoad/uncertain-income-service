@@ -1,0 +1,29 @@
+# IDE and OS files
+.idea
+.editorconfig
+.vscode
+.DS_Store
+
+# User Config
+.env
+
+# Build, lint and test artifacts
+.eslintrc
+.nyc_output
+.prettierrc
+.build
+.webpack
+node_modules
+npm-debug.log
+yarn-error.log
+coverage
+artifacts
+
+# Deployment
+.serverless
+
+# OpenAPI docs
+dist/
+
+# Genereted Types
+generatedTypes
