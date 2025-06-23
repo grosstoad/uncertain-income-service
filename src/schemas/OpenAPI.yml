@@ -153,18 +153,18 @@ components:
   schemas:
     # Main Request/Response Schemas
     UncertainIncomeRequestV1:
-      $ref: '../v1/models/UncertainIncomeRequest.yml'
+      $ref: './UncertainIncomeRequest.yml'
     UncertainIncomeResponseV1:
-      $ref: '../v1/models/UncertainIncomeResponse.yml'
+      $ref: './UncertainIncomeResponse.yml'
     ErrorResponseV1:
-      $ref: '../v1/models/ErrorResponse.yml'
+      $ref: './ErrorResponse.yml'
     
     # Supporting Schemas
     IncomeType:
-      $ref: '../v1/models/IncomeType.yml'
+      $ref: './IncomeType.yml'
     VerificationMethod:
-      $ref: '../v1/models/VerificationMethod.yml'
+      $ref: './VerificationMethod.yml'
     SalaryFrequency:
-      $ref: '../v1/models/SalaryFrequency.yml'
+      $ref: './SalaryFrequency.yml'
     CalculationDetails:
-      $ref: '../v1/models/CalculationDetails.yml' 
+      $ref: './CalculationDetails.yml' 
