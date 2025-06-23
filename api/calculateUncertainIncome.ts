@@ -1,8 +1,17 @@
 // Vercel serverless function wrapper
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { handler } from '../src/calculateUncertainIncome';
+import { handler } from '../src/handlers/calculateUncertainIncome';
 
 export default async function (req: VercelRequest, res: VercelResponse) {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Request-ID');
+    res.status(200).end();
+    return;
+  }
+
   // Convert Vercel request to AWS Lambda format
   const event = {
     httpMethod: req.method,

@@ -1,6 +1,9 @@
 class UncertainIncomeCalculator {
     constructor() {
-        this.apiUrl = 'http://localhost:3000/v1/calculate'; // Correct serverless offline URL
+        // Use relative URL for production, localhost for development
+        this.apiUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/v1/calculate'  // Development
+            : '/api/calculateUncertainIncome';  // Production
         this.currentFields = [];
         this.init();
     }

@@ -47,6 +47,9 @@ export const errorHandler = (
         headers: {
           'Content-Type': 'application/json',
           'X-Request-ID': requestId,
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, X-Request-ID',
         },
         body: JSON.stringify(errorResponse),
       };
@@ -72,6 +75,9 @@ export const errorHandler = (
         headers: {
           'Content-Type': 'application/json',
           'X-Request-ID': requestId,
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, X-Request-ID',
         },
         body: JSON.stringify(errorResponse),
       };

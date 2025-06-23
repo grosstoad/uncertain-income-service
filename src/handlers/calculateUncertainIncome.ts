@@ -39,6 +39,9 @@ const baseHandler = async (event: APIGatewayProxyEvent, context: Context): Promi
     headers: {
       'Content-Type': 'application/json',
       'X-Request-ID': reqId,
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Request-ID',
     },
     body: JSON.stringify(result),
   };
