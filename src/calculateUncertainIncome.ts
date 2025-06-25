@@ -4,11 +4,12 @@ import {
   IncomeType,
 } from './types';
 import { apiVersion, logicVersion } from './versions.config';
-import { calculateOvertimeIncome } from './calculations/overtimeCalculations';
-import { calculateCasualIncome, calculateContractVariableIncome } from './calculations/employmentBasedCalculations';
-import { calculateCommissionsIncome } from './calculations/commissionsCalculations';
-import { calculateBonusIncome } from './calculations/bonusCalculations';
-import { calculateInvestmentIncome } from './calculations/investmentCalculations';
+import { 
+  calculateIncomeUnified, 
+  UnifiedIncomeCalculationInput, 
+  INCOME_CALCULATION_CONFIGS 
+} from './calculations/unifiedIncomeCalculation';
+import { calculateBonusIncome, calculateInvestmentIncome } from './calculations/annualIncomeCalculation';
 import { InvalidInputError } from './utils/InvalidInputError';
 
 export function calculateUncertainIncome(request: UncertainIncomeRequest): UncertainIncomeSuccessResponse {
@@ -16,36 +17,43 @@ export function calculateUncertainIncome(request: UncertainIncomeRequest): Uncer
     let result;
     
     switch (request.incomeType) {
-      case IncomeType.OVERTIME: {
-        result = calculateOvertimeIncome(request);
-        break;
-      }
-      
-      case IncomeType.CASUAL: {
-        result = calculateCasualIncome(request);
-        break;
-      }
-      
-      case IncomeType.CONTRACT_VARIABLE: {
-        result = calculateContractVariableIncome(request);
-        break;
-      }
-      
+      case IncomeType.OVERTIME:
+      case IncomeType.CASUAL:
+      case IncomeType.CONTRACT_VARIABLE:
       case IncomeType.COMMISSIONS: {
-        result = calculateCommissionsIncome(request);
+        // Use unified income calculation engine for employment-based income types
+        const unifiedInput: UnifiedIncomeCalculationInput = {
+          incomeType: request.incomeType,
+          salaryFrequency: request.salaryFrequency,
+          endDateLatestPayslip: request.endDateLatestPayslip,
+          employmentStartDate: request.employmentStartDate,
+          ytdAmountLatestPayslip: request.ytdAmountLatestPayslip,
+          baseIncome: 'baseIncome' in request ? request.baseIncome : undefined,
+          lastFyAnnualIncome: request.lastFyAnnualIncome,
+          annualOverrideAmount: request.annualOverrideAmount,
+          actualYtdCommission: 'actualYtdCommission' in request ? request.actualYtdCommission : undefined,
+          verificationMethod: 'verificationMethod' in request ? request.verificationMethod : undefined
+        };
+        
+        result = calculateIncomeUnified(unifiedInput, INCOME_CALCULATION_CONFIGS[request.incomeType as keyof typeof INCOME_CALCULATION_CONFIGS]);
         break;
       }
       
       case IncomeType.BONUS: {
-        result = calculateBonusIncome(request);
+        result = calculateBonusIncome({
+          verificationMethod: request.verificationMethod,
+          currentFyBonus: request.currentFyBonus,
+          lastFyBonus: request.lastFyBonus
+        });
         break;
       }
       
       case IncomeType.INVESTMENT_SHARES:
       case IncomeType.INVESTMENT_INTEREST: {
         result = calculateInvestmentIncome({
-          ...request,
-          incomeType: request.incomeType
+          incomeType: request.incomeType,
+          currentFy: request.currentFy,
+          lastFy: request.lastFy
         });
         break;
       }
